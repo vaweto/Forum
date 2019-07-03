@@ -51,4 +51,16 @@ class ReadThreadsTest extends TestCase
 
         $response->assertSee($reply->body);
     }
+
+    /** @test */
+    function a_user_can_see_thread_owner_name_on_thread_page()
+    {
+        $this->withoutExceptionHandling();
+
+        $response = $this->get('/threads/' .  $this->thread->id);
+
+        $response->assertStatus(200);
+
+        $response->assertSee($this->thread->owner->name);
+    }
 }
