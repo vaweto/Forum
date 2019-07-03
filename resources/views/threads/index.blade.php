@@ -11,7 +11,9 @@
                     </div>
                     <div class="card-body">
                         @foreach($threads as $thread)
-                        <h4>{{$thread->title}}</h4>
+                        <a>
+                            <a href="{{$thread->path() }}">{{$thread->title}}</a>
+                        </h4>
                         <div>{{$thread->body}}</div>
                             <hr>
                         @endforeach
