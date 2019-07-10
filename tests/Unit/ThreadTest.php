@@ -43,4 +43,16 @@ class ThreadTest extends TestCase
         $this->assertCount(1,$this->thread->replies);
         $this->assertDatabaseHas('replies', ['body'=>'foobar']);
     }
+
+    /** @test */
+    function it_belong_to_a_channel()
+    {
+        $this->assertInstanceOf('App\Channel', $this->thread->channel);
+    }
+
+    /** @test */
+    function it_can_make_a_string_path()
+    {
+        $this->assertEquals('/threads/'. $this->thread->channel->slug . '/' . $this->thread->id, $this->thread->path());
+    }
 }

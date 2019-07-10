@@ -21,7 +21,7 @@ class ParticipateInForumTest extends TestCase
 
         $reply = factory('App\Reply')->create();
 
-        $this->post('/threads/'.$thread->id.'/replies', $reply->toArray());
+        $this->post($thread->path() . '/replies', $reply->toArray());
 
         $this->get($thread->path())
             ->assertSee($reply->body);
@@ -39,7 +39,20 @@ class ParticipateInForumTest extends TestCase
 
         $reply = factory('App\Reply')->create();
 
-        $this->post('/threads/'.$thread->id.'/replies', $reply->toArray());
+        $this->post($thread->path() . '/replies', $reply->toArray());
 
+    }
+
+    /** @test */
+    function a_reply_requires_a_body()
+    {
+        $this->signIn();
+
+        $thread = factory('App\Thread')->create();
+
+        $reply = make('App\Reply', ['body' => null]);
+
+        $this->post($thread->path() . '/replies', $reply->toArray())
+            ->assertSessionHasErrors('body');
     }
 }

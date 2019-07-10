@@ -31,7 +31,7 @@ class ReadThreadsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $response = $this->get('/threads/' . $this->thread->id);
+        $response = $this->get($this->thread->path());
 
         $response->assertStatus(200);
 
@@ -45,7 +45,7 @@ class ReadThreadsTest extends TestCase
 
         $reply = factory('App\Reply')->create(['thread_id' => $this->thread->id]);
 
-        $response = $this->get('/threads/' .  $this->thread->id);
+        $response = $this->get($this->thread->path());
 
         $response->assertStatus(200);
 
@@ -57,10 +57,23 @@ class ReadThreadsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $response = $this->get('/threads/' .  $this->thread->id);
+        $response = $this->get( $this->thread->path());
 
         $response->assertStatus(200);
 
         $response->assertSee($this->thread->owner->name);
+    }
+
+    /** @test */
+    function a_user_can_filter_threads_according_to_a_tag()
+    {
+        $channel = factory('App\Channel')->create();
+        $threadInChannel = factory('App\Thread')->create( ['channel_id' => $channel->id]);
+
+        $threadNotInChannel = make('App\Thread');
+
+        $this->get('/threads/' . $channel->slug)
+            ->assertSee($threadInChannel->title)
+            ->assertDontSee($threadNotInChannel->title);
     }
 }
