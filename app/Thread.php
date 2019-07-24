@@ -9,6 +9,15 @@ class Thread extends Model
     //
     protected $guarded = [];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('repluCount', function($builder){
+            $builder->withCount('replies');
+        });
+    }
+
     public function path()
     {
         return '/threads/' . $this->channel->slug . '/' . $this->id;
@@ -17,6 +26,11 @@ class Thread extends Model
     public function replies()
     {
         return $this->hasMany('App\Reply');
+    }
+
+    public function getReplyCountAttribute()
+    {
+        return $this->replies()->count();
     }
 
     public function owner()
@@ -32,6 +46,11 @@ class Thread extends Model
     public function addReply($reply)
     {
         $this->replies()->create($reply);
+    }
+
+    public function scopeFilter($query ,$filters)
+    {
+        return $filters->apply($query);
     }
 
 }
