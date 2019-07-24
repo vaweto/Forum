@@ -9,12 +9,18 @@ class Thread extends Model
     //
     protected $guarded = [];
 
+    protected $with = ['channel'];
+
     protected static function boot()
     {
         parent::boot();
 
-        static::addGlobalScope('repluCount', function($builder){
+        static::addGlobalScope('replyCount', function($builder){
             $builder->withCount('replies');
+        });
+
+        static::addGlobalScope('creator', function($builder){
+            $builder->with('owner');
         });
     }
 
