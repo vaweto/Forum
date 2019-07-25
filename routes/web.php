@@ -28,3 +28,5 @@ Route::post('/replies/{reply}/favorites', 'FavoritesController@store');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/profile/{user}', 'UserController@show');
