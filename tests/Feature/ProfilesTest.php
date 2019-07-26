@@ -22,7 +22,7 @@ class ProfilesTest extends TestCase
 
         $user = factory('App\User')->create();
 
-        $this->get('/profile/'.$user->name)
+        $this->get('/profiles/'.$user->name)
             ->assertSee($user->name);
 
     }
@@ -32,11 +32,11 @@ class ProfilesTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = factory('App\User')->create();
+        $this->signIn( $user = factory('App\User')->create());
 
         $thread = factory('App\Thread')->create(['user_id' => $user->id]);
 
-        $this->get('/profile/'.$user->name)
+        $this->get('/profiles/'.$user->name)
             ->assertSee($thread->title);
     }
 }

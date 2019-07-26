@@ -23,6 +23,63 @@ class CreateThreadsTest extends TestCase
     }
 
     /** @test */
+    function an_authenticated_user_can_delete_his_own_thread()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = factory('App\User')->create();
+        $this->signIn($user);
+
+        $thread = factory('App\Thread')->create(['user_id' => $user->id]);
+
+        $this->delete($thread->path());
+
+        $this->assertDatabaseMissing('threads',['id' => $thread->id]);
+    }
+
+    /** @test */
+    function when_thread_deleted_delete_all_his_replies()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = factory('App\User')->create();
+        $this->signIn($user);
+
+        $thread = factory('App\Thread')->create(['user_id' => $user->id]);
+        $reply = factory('App\Reply')->create(['thread_id' => $thread->id]);
+
+        $response = $this->delete( $thread->path());
+
+        $this->assertDatabaseMissing('replies',['id' => $reply->id]);
+    }
+
+    /** @test */
+    function an_authenticated_user_cannot_delete_other_owners_thread()
+    {
+        $user = factory('App\User')->create();
+
+        $thread = factory('App\Thread')->create(['user_id' => $user->id]);
+
+        $this->signIn(factory('App\User')->create());
+
+        $this->delete($thread->path());
+
+        $this->assertDatabaseHas('threads',['id' => $thread->id]);
+    }
+
+    /** @test */
+    function an_non_user_cannot_delete_his_own_thread()
+    {
+        $user = factory('App\User')->create();
+
+        $thread = factory('App\Thread')->create(['user_id' => $user->id]);
+
+        $this->json('Delete', $thread->path());
+
+        $this->assertDatabaseHas('threads',['id' => $thread->id]);
+    }
+
+    /** @test */
     function an_not_authenticated_may_not_create_new_forum_thread()
     {
         $this->withoutExceptionHandling()

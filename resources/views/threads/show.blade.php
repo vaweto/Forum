@@ -6,8 +6,20 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <a href="/profiles/{{$thread->owner->name}}">{{$thread->owner->name}}</a>
-                        {{$thread->title}}
+                        <div class="level">
+                            <span class="flex">
+                                <a href="/profiles/{{$thread->owner->name}}">{{$thread->owner->name}}</a>
+                                {{$thread->title}}
+                            </span>
+                            @can('delete', $thread)
+                                <form action="{{$thread->path()}}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn  btn-danger">DELETE</button>
+                                </form>
+                            @endcan
+                        </div>
+
                     </div>
                     <div class="card-body">
                         <div>{{$thread->body}}</div>
